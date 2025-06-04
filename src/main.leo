@@ -14,7 +14,7 @@ program todo_list.aleo {
 
     /* Todo List Operations */
 
-    async transition add_todo(public todo: u64) {
+    async transition add_todo(public todo: u64) -> Future {
         return add_todo_internal(self.caller, todo);
     }
 
@@ -27,12 +27,12 @@ program todo_list.aleo {
         Mapping::set(todo_count, caller, current_count + 1u64);
     }
 
-    async transition remove_todo(public todo_id: u64) {
+    async transition remove_todo(public todo_id: u64) -> Future {
         return remove_todo_internal(self.caller, todo_id);
     }
 
     async function remove_todo_internal(caller: address, todo_id: u64) {
-        // Remove todo by setting it to 0 (or you could use another value to indicate removal)
+        // Remove todo by setting it to 0
         Mapping::set(todo_list, todo_id, 0u64);
     }
 }
