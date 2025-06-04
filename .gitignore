@@ -140,3 +140,5 @@ dist
 *.prover
 *.verifier
 outputs/
+
+.env.old
