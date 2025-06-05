@@ -24,9 +24,11 @@ finalize add_todo:
     input r1 as Todo.public;
     get.or_use todo_count[r0] 0u64 into r2;
     hash.bhp256 r0 into r3 as field;
-    set r1 into todos[r3];
-    add r2 1u64 into r4;
-    set r4 into todo_count[r0];
+    cast r2 into r4 as field;
+    add r3 r4 into r5;
+    set r1 into todos[r5];
+    add r2 1u64 into r6;
+    set r6 into todo_count[r0];
 
 function remove_todo:
     input r0 as u64.public;
@@ -36,5 +38,7 @@ finalize remove_todo:
     input r0 as address.public;
     input r1 as u64.public;
     hash.bhp256 r0 into r2 as field;
-    cast 0u64 0u64 false 0u64 false into r3 as Todo;
-    set r3 into todos[r2];
+    cast r1 into r3 as field;
+    add r2 r3 into r4;
+    cast 0u64 0u64 false 0u64 false into r5 as Todo;
+    set r5 into todos[r4];
