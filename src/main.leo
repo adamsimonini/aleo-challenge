@@ -1,38 +1,45 @@
-// The 'third_tokenizer' program.
 program todo_list.aleo {
-    // On-chain storage mappings
-    mapping account: address => u64;
-    mapping todo_list: u64 => u64;
+
     mapping todo_count: address => u64;
+    mapping todos: field => Todo;
 
-    record Token {
-        // The token owner.
-        owner: address,
-        // The token amount.
-        amount: u64,
+    struct Todo {
+        id: u64,
+        description: u64,
+        completed: bool,
+        priority: u64,
+        is_in_progress: bool,
     }
 
-    /* Todo List Operations */
-
-    async transition add_todo(public todo: u64) -> Future {
-        return add_todo_internal(self.caller, todo);
+    async transition add_todo(public todo: Todo) {
+        let future: Future = add_todo_internal(self.caller, todo);
     }
 
-    async function add_todo_internal(caller: address, todo: u64) {
-        // Get current count
-        let current_count: u64 = Mapping::get_or_use(todo_count, caller, 0u64);
-        // Add new todo
-        Mapping::set(todo_list, current_count, todo);
-        // Increment count
-        Mapping::set(todo_count, caller, current_count + 1u64);
+    async function add_todo_internal(caller: address, todo: Todo) {
+        let count: u64 = Mapping::get_or_use(todo_count, caller, 0u64);
+        
+        // Create unique key by combining address and count
+        let unique_id: field = BHP256::hash_to_field(caller) + count as field;
+        
+        Mapping::set(todos, unique_id, todo);
+        Mapping::set(todo_count, caller, count + 1u64);
     }
 
-    async transition remove_todo(public todo_id: u64) -> Future {
-        return remove_todo_internal(self.caller, todo_id);
+    async transition remove_todo(public index: u64) {
+        let future: Future = remove_todo_internal(self.caller, index);
     }
 
-    async function remove_todo_internal(caller: address, todo_id: u64) {
-        // Remove todo by setting it to 0
-        Mapping::set(todo_list, todo_id, 0u64);
+    async function remove_todo_internal(caller: address, index: u64) {
+        let unique_id: field = BHP256::hash_to_field(caller) + index as field;
+
+        let empty_todo: Todo = Todo {
+            id: 0u64,
+            description: 0u64,
+            completed: false,
+            priority: 0u64,
+            is_in_progress: false,
+        };
+
+        Mapping::set(todos, unique_id, empty_todo);
     }
 }
