@@ -5,16 +5,17 @@ program todo_list.aleo {
     mapping todo_count: address => u64;
     mapping todos: field => Todo;
 
+    // new type Todo 
     struct Todo {
-        id: u64,
         description: [u8; 32],
         completed: bool,
         priority: u64,
         is_in_progress: bool,
     }
 
-    async transition add_todo(public todo: Todo) {
+    async transition add_todo(public todo: Todo) -> (Todo, Future) {
         let future: Future = add_todo_internal(self.caller, todo);
+        return (todo, future);
     }
 
     async function add_todo_internal(caller: address, todo: Todo) {
@@ -29,8 +30,9 @@ program todo_list.aleo {
         Mapping::set(todo_count, caller, count + 1u64);
     }
 
-    async transition remove_todo(public todo_id: u64) {
+    async transition remove_todo(public todo_id: u64) -> (u64, Future) {
         let future: Future = remove_todo_internal(self.caller, todo_id);
+        return (todo_id, future);
     }
 
     async function remove_todo_internal(caller: address, todo_id: u64) {

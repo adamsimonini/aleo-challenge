@@ -3,5 +3,6 @@
   "version": "0.1.0",
   "description": "A todo list program on Aleo",
   "license": "MIT",
+  "dependencies": null,
   "dev_dependencies": null
 }
