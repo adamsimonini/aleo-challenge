@@ -1,6 +1,7 @@
 {
   "program": "todo_list.aleo",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "A todo list program on Aleo",
-  "license": "MIT"
+  "license": "MIT",
+  "dev_dependencies": null
 }
