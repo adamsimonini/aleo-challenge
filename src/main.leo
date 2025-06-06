@@ -5,7 +5,7 @@ program todo_list.aleo {
 
     struct Todo {
         id: u64,
-        description: u64,
+        description: [u8; 32],
         completed: bool,
         priority: u64,
         is_in_progress: bool,
@@ -18,8 +18,10 @@ program todo_list.aleo {
     async function add_todo_internal(caller: address, todo: Todo) {
         let count: u64 = Mapping::get_or_use(todo_count, caller, 0u64);
         
-        // Correct: hash both caller and count as tuple to get unique id
-        let unique_id: field = BHP256::hash_to_field(caller) + count as field;
+        // Create unique id by hashing caller and count as fields
+        let caller_field: field = caller as field;
+        let count_field: field = count as field;
+        let unique_id: field = BHP256::hash_to_field([caller_field, count_field]);
 
         Mapping::set(todos, unique_id, todo);
         Mapping::set(todo_count, caller, count + 1u64);
@@ -30,14 +32,10 @@ program todo_list.aleo {
     }
 
     async function remove_todo_internal(caller: address, todo_id: u64) {
-        let unique_id: field = BHP256::hash_to_field(caller) + todo_id as field;
-        let empty_todo: Todo = Todo {
-            id: 0u64,
-            description: 0u64,
-            completed: false,
-            priority: 0u64,
-            is_in_progress: false,
-        };
-        Mapping::set(todos, unique_id, empty_todo);
+        let caller_field: field = caller as field;
+        let todo_id_field: field = todo_id as field;
+        let unique_id: field = BHP256::hash_to_field([caller_field, todo_id_field]);
+
+        Mapping::remove(todos, unique_id);
     }
 }
