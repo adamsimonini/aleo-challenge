@@ -1,3 +1,5 @@
+import models.aleo;
+
 program todo_list.aleo {
 
     mapping todo_count: address => u64;
