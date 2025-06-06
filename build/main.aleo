@@ -1,7 +1,6 @@
 program todo_list.aleo;
 
 struct Todo:
-    id as u64;
     description as [u8; 32u32];
     completed as boolean;
     priority as u64;
@@ -29,11 +28,9 @@ finalize add_todo:
     cast r2 into r4 as field;
     cast r3 r4 into r5 as [field; 2u32];
     hash.bhp256 r5 into r6 as field;
-    cast r6 into r7 as u64;
-    cast r7 r1.description r1.completed r1.priority r1.is_in_progress into r8 as Todo;
-    set r8 into todos[r6];
-    add r2 1u64 into r9;
-    set r9 into todo_count[r0];
+    set r1 into todos[r6];
+    add r2 1u64 into r7;
+    set r7 into todo_count[r0];
 
 function remove_todo:
     input r0 as u64.public;
